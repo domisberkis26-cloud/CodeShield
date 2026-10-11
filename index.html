@@ -4,424 +4,393 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dimension Arcade</title>
+<meta name="description" content="CodeShield scans pasted source code for suspicious patterns without executing it.">
+<title>CodeShield | Code Risk Scanner</title>
 <style>
-:root {
-  --bg:#080b16;
-  --panel:#11182a;
-  --panel2:#18223a;
-  --cyan:#48f4ff;
-  --purple:#a78bfa;
-  --pink:#ff64c8;
-  --text:#f3f6ff;
-  --muted:#9ba8c7;
+:root{
+ --bg:#080d18;--panel:#111b2c;--panel2:#18263b;
+ --border:#283952;--text:#edf4ff;--muted:#9bacc5;
+ --cyan:#45e5f5;--green:#4de2a0;--yellow:#ffcb67;
+ --red:#ff697d;--purple:#b5a0ff;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:system-ui,Arial,sans-serif;
+ margin:0;background:var(--bg);color:var(--text);
+ font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;
 }
-button,input{font:inherit}
+button,select,textarea,input{font:inherit}
 button{cursor:pointer}
-.app{display:flex;min-height:100vh}
-.sidebar{
-  width:220px;background:#0d1221;border-right:1px solid #202b43;
-  padding:22px 14px;flex-shrink:0;
+header{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:14px;padding:17px 5%;border-bottom:1px solid var(--border);
+ background:#0c1423;
 }
-.logo{font-size:22px;font-weight:900;margin:4px 8px 30px}
-.logo span{color:var(--cyan)}
-.nav{
-  display:block;width:100%;text-align:left;padding:13px;
-  border:0;border-radius:12px;background:transparent;color:var(--muted);
-  margin:5px 0;
+.brand{font-size:23px;font-weight:900;letter-spacing:-.7px}
+.brand span{color:var(--cyan)}
+.status{font-size:12px;color:var(--green)}
+main{max-width:1120px;margin:auto;padding:30px 18px}
+h1{font-size:clamp(28px,5vw,43px);line-height:1.15;margin:12px 0}
+h2{font-size:19px;margin:0 0 13px}
+p{color:var(--muted)}
+.hero{margin-bottom:25px}
+.eyebrow{color:var(--cyan);font-weight:750;letter-spacing:1.5px;font-size:12px}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,1fr);gap:18px}
+.panel{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:17px;padding:19px;min-width:0;
 }
-.nav.active,.nav:hover{background:var(--panel2);color:white}
-main{padding:24px;width:calc(100% - 220px);min-width:0}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.search{
-  background:var(--panel);border:1px solid #273450;border-radius:12px;
-  color:white;padding:12px 14px;width:min(100%,320px);outline:none;
+.toolbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+select,.btn{
+ background:var(--panel2);color:var(--text);border:1px solid #354963;
+ border-radius:9px;padding:10px 12px;
 }
-h1{font-size:clamp(27px,4vw,42px);margin:25px 0 6px}
-.sub{color:var(--muted);margin:0 0 24px}
-.hero{
-  background:linear-gradient(115deg,#183d61,#39255e 65%,#702e70);
-  border:1px solid #5266a2;border-radius:22px;padding:26px;
-  display:flex;align-items:center;justify-content:space-between;gap:18px;
-  overflow:hidden;min-height:190px;
+.btn.primary{background:var(--cyan);border-color:var(--cyan);color:#06121a;font-weight:850}
+.btn:hover{filter:brightness(1.12)}
+textarea{
+ width:100%;min-height:330px;resize:vertical;background:#080f1d;
+ border:1px solid #2b3d57;border-radius:12px;padding:15px;
+ color:#dceaff;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;
+ outline:none;tab-size:4;
 }
-.hero h2{font-size:29px;margin:8px 0}
-.hero p{color:#d1d8ff}
-.hero-art{font-size:80px;filter:drop-shadow(0 0 20px #48f4ff)}
-.pill{
-  display:inline-block;background:#ffffff19;border:1px solid #ffffff35;
-  border-radius:20px;padding:5px 10px;font-size:12px;
+textarea:focus,select:focus{border-color:var(--cyan)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+.note{font-size:12px;margin-top:12px}
+.scorebox{
+ border:1px solid var(--border);border-radius:14px;padding:16px;
+ background:#0b1423;margin-bottom:16px;
 }
-.play{
-  border:0;border-radius:11px;background:var(--cyan);color:#07111d;
-  padding:11px 18px;font-weight:850;
-}
-.section-head{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;margin:30px 0 14px;
-}
-.section-head h2{font-size:20px;margin:0}
-.categories{
-  display:flex;gap:9px;overflow-x:auto;padding:3px 1px 12px;
-}
-.cat{
-  white-space:nowrap;border:1px solid #2b3752;color:#c4cee7;
-  background:var(--panel);padding:10px 15px;border-radius:25px;
-}
-.cat.active{background:var(--cyan);color:#06121a;border-color:var(--cyan)}
-.grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-  gap:15px;
-}
-.card{
-  min-width:0;background:var(--panel);border:1px solid #202e49;
-  border-radius:17px;overflow:hidden;transition:.18s;
-}
-.card:hover{transform:translateY(-3px);border-color:#6876b5}
-.art{
-  height:118px;display:grid;place-items:center;font-size:54px;
-  background:linear-gradient(135deg,#172e51,#32224d);
-}
-.card-body{padding:14px}
-.card h3{font-size:16px;margin:9px 0 5px}
-.card p{font-size:13px;color:var(--muted);margin:0 0 13px;min-height:34px}
-.card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.dim{font-size:11px;color:var(--cyan);background:#48f4ff12;padding:5px 8px;border-radius:8px}
-.small-btn{
-  background:var(--panel2);color:white;border:1px solid #35415c;
-  border-radius:9px;padding:8px 11px;
-}
-.small-btn:hover{border-color:var(--cyan)}
-.empty{padding:30px;color:var(--muted);text-align:center;grid-column:1/-1}
-footer{color:var(--muted);font-size:12px;margin:35px 0 5px}
-.overlay{
-  display:none;position:fixed;inset:0;z-index:5;background:#050711ed;
-  padding:16px;overflow:auto;
-}
-.overlay.show{display:grid;place-items:center}
-.game-window{
-  width:min(900px,100%);background:#10172a;border:1px solid #394867;
-  border-radius:20px;padding:18px;
-}
-.game-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.game-top h2{margin:5px 0 12px}
-#stage{
-  display:block;width:100%;height:min(58vh,480px);min-height:260px;
-  border-radius:14px;background:#050b19;border:1px solid #273450;
-  touch-action:manipulation;
-}
-.game-info{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.controls{color:var(--muted);font-size:13px}
-.game-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-#message{color:var(--cyan);font-weight:700;min-height:24px}
-@media(max-width:680px){
-  .app{display:block}
-  .sidebar{width:100%;padding:12px;display:flex;gap:5px;overflow-x:auto;border-right:0;border-bottom:1px solid #202b43}
-  .logo{display:none}
-  .nav{width:auto;white-space:nowrap;margin:0;padding:10px}
-  main{width:100%;padding:16px}
-  .hero{padding:19px}.hero-art{font-size:55px}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .art{height:95px;font-size:43px}
-  .card-body{padding:11px}
-}
-@media(max-width:360px){.grid{grid-template-columns:1fr}}
+.scoreline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.risk{font-size:23px;font-weight:900}
+.meter{height:9px;background:#26364d;border-radius:10px;overflow:hidden;margin:12px 0}
+#meterFill{height:100%;width:0;background:var(--green);transition:width .25s}
+.metric{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #243149}
+.metric:last-child{border:0}
+.findings{display:flex;flex-direction:column;gap:10px}
+.finding{border:1px solid var(--border);border-radius:11px;padding:12px;background:#0c1524}
+.finding strong{display:block;margin-bottom:4px}
+.finding p{font-size:13px;margin:4px 0}
+.severity{font-size:10px;letter-spacing:.6px;font-weight:900}
+.high{color:var(--red)}.medium{color:var(--yellow)}.low{color:var(--cyan)}
+.safe{color:var(--green)}
+.empty{color:var(--muted);padding:14px 0}
+footer{margin-top:25px;color:var(--muted);font-size:12px}
+.disclaimer{border-left:3px solid var(--yellow);padding:10px 13px;background:#211d16;border-radius:5px;font-size:12px;color:#e6d5b3;margin-top:17px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}header{padding:14px 17px}main{padding:23px 12px}.panel{padding:14px}textarea{min-height:280px}}
 </style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar">
-  <div class="logo">DIMENSION<span>✦</span></div>
-  <button class="nav active" data-view="all">⌂ Home</button>
-  <button class="nav" data-view="all">▦ All Minigames</button>
-  <button class="nav" data-view="favorites">♡ Favorites</button>
-  <button class="nav" data-view="recent">◷ Recently Played</button>
-  <button class="nav" id="settingsBtn">⚙ Settings</button>
-</aside>
+<header>
+ <div class="brand">🛡️ Code<span>Shield</span></div>
+ <div class="status">● LOCAL SCANNER</div>
+</header>
 
 <main>
-  <div class="top">
-    <div><span class="pill">ARCADE OS · BROWSER EDITION</span></div>
-    <input id="search" class="search" placeholder="⌕ Search minigames..." aria-label="Search minigames">
-  </div>
+ <section class="hero">
+  <div class="eyebrow">SOURCE CODE ANALYSIS</div>
+  <h1>Inspect code before you run it.</h1>
+  <p>Check pasted source code for suspicious operations, risky commands, obfuscation and potentially dangerous behavior.</p>
+ </section>
 
-  <h1>Choose Your Dimension.</h1>
-  <p class="sub">Small games. Strange worlds. Endless experiments.</p>
+ <div class="layout">
+  <section class="panel">
+   <div class="toolbar">
+    <h2>Code input</h2>
+    <select id="language" aria-label="Programming language">
+     <option value="auto">Auto detect / mixed</option>
+     <option>Python</option>
+     <option>JavaScript</option>
+     <option>HTML</option>
+     <option>PHP</option>
+     <option>Java</option>
+     <option>C</option>
+     <option>C++</option>
+     <option>C#</option>
+     <option>Lua</option>
+     <option>Shell</option>
+    </select>
+   </div>
+   <textarea id="code" spellcheck="false" autocapitalize="off"
+    autocomplete="off" placeholder="Paste source code here...
 
-  <section class="hero">
-    <div>
-      <span class="pill">✦ FEATURED GAME · 3D</span>
-      <h2>Neon Rift</h2>
-      <p>Dodge obstacles in a glowing, three-dimensional world.</p>
-      <button class="play" data-play="neon">▶ Play featured</button>
-    </div>
-    <div class="hero-art" aria-hidden="true">◈</div>
+CodeShield analyzes the text. It never executes the submitted code."></textarea>
+   <div class="actions">
+    <button class="btn primary" id="scan">🔍 Scan code</button>
+    <button class="btn" id="example">Load demo</button>
+    <button class="btn" id="clear">Clear</button>
+    <button class="btn" id="export">Export report</button>
+   </div>
+   <p class="note">Analysis runs locally in this page. Your pasted source is not sent to a server by this scanner.</p>
   </section>
 
-  <div class="section-head"><h2>Explore dimensions</h2></div>
-  <div class="categories" id="categories">
-    <button class="cat active" data-cat="All">✦ All</button>
-    <button class="cat" data-cat="1D">━ 1D</button>
-    <button class="cat" data-cat="2D">▰ 2D</button>
-    <button class="cat" data-cat="3D">◇ 3D</button>
-    <button class="cat" data-cat="4D+">∞ 4D+</button>
-    <button class="cat" data-cat="Puzzle">🧩 Puzzle</button>
-    <button class="cat" data-cat="Arcade">⚡ Arcade</button>
-    <button class="cat" data-cat="Experimental">🌀 Experimental</button>
-  </div>
+  <section class="panel">
+   <h2>Scan report</h2>
+   <div class="scorebox">
+    <div class="scoreline">
+     <span class="muted">Risk assessment</span>
+     <span id="risk" class="risk">NOT SCANNED</span>
+    </div>
+    <div class="meter"><div id="meterFill"></div></div>
+    <div class="scoreline">
+     <span id="scoreText">Run a scan to begin.</span>
+     <span id="scoreNumber">—</span>
+    </div>
+   </div>
+   <div class="metric"><span>Findings</span><strong id="findingCount">0</strong></div>
+   <div class="metric"><span>High severity</span><strong id="highCount">0</strong></div>
+   <div class="metric"><span>Medium severity</span><strong id="medCount">0</strong></div>
+   <div class="metric"><span>Lines checked</span><strong id="lineCount">0</strong></div>
+   <div class="metric"><span>Execution</span><strong class="safe">Disabled</strong></div>
+   <p class="note">Risk score is a heuristic estimate, not a probability of infection.</p>
+  </section>
+ </div>
 
-  <div class="section-head">
-    <h2 id="listTitle">All minigames</h2>
-    <span class="pill" id="count">12 games</span>
+ <section class="panel" style="margin-top:18px">
+  <div class="scoreline">
+   <h2>Detected patterns</h2>
+   <span class="eyebrow" id="scanLabel">AWAITING SCAN</span>
   </div>
-  <section class="grid" id="grid"></section>
-  <footer>DIMENSION ARCADE · Original browser minigames · Progress is stored locally on this device.</footer>
-</main>
-</div>
-
-<div class="overlay" id="overlay">
- <section class="game-window">
-  <div class="game-top">
-    <div><span class="pill" id="gameDimension">2D GAME</span><h2 id="gameTitle">Game</h2></div>
-    <button class="small-btn" id="close">✕ Close</button>
-  </div>
-  <canvas id="stage" width="900" height="480"></canvas>
-  <div class="game-info">
-    <div><strong id="score">Score: 0</strong><div id="message"></div></div>
-    <div class="controls" id="instructions"></div>
-  </div>
-  <div class="game-buttons">
-    <button class="play" id="start">▶ Start / Restart</button>
-    <button class="small-btn" id="left">← Left</button>
-    <button class="small-btn" id="right">Right →</button>
-    <button class="small-btn" id="jump">↑ Jump / Move</button>
+  <div id="findings" class="findings">
+   <div class="empty">No report yet. Paste code and select Scan code.</div>
   </div>
  </section>
-</div>
+
+ <div class="disclaimer">
+  <strong>Security limitation:</strong> A clean scan does not prove code is safe.
+  This lightweight browser scanner uses pattern matching and can miss unknown,
+  encoded, indirect or context-dependent behavior. Review findings before running
+  unfamiliar code; use a properly isolated sandbox and a more comprehensive
+  security analyzer for important decisions.
+ </div>
+ <footer>CodeShield · Browser edition · No source-code execution · No server required</footer>
+</main>
 
 <script>
 "use strict";
-const games = [
- {id:"line",name:"Line Runner",dim:"1D",cat:"Arcade",icon:"━",desc:"Move along one line and avoid incoming obstacles.",type:"line"},
- {id:"pixel",name:"Pixel Dash",dim:"2D",cat:"Arcade",icon:"👾",desc:"Jump across platforms and collect glowing stars.",type:"platform"},
- {id:"neon",name:"Neon Rift",dim:"3D",cat:"Arcade",icon:"🔷",desc:"Dodge incoming obstacles in a 3D perspective.",type:"neon"},
- {id:"time",name:"Time Loop",dim:"4D+",cat:"Experimental",icon:"⏳",desc:"A timed puzzle where your moves change the clock.",type:"time"},
- {id:"gravity",name:"Gravity Flip",dim:"2D",cat:"Arcade",icon:"🌀",desc:"Flip gravity to reach the goal.",type:"gravity"},
- {id:"stars",name:"Star Collector",dim:"2D",cat:"Arcade",icon:"⭐",desc:"Collect stars while avoiding moving hazards.",type:"stars"},
- {id:"maze",name:"Maze Shift",dim:"2D",cat:"Puzzle",icon:"🧩",desc:"Find the exit in a maze that changes over time.",type:"maze"},
- {id:"rhythm",name:"Rhythm Pulse",dim:"1D",cat:"Arcade",icon:"🎵",desc:"Hit the beat when the pulse reaches the target.",type:"rhythm"},
- {id:"portal",name:"Portal Hop",dim:"3D",cat:"Experimental",icon:"🪐",desc:"Navigate a perspective portal course.",type:"portal"},
- {id:"micro",name:"Microverse",dim:"4D+",cat:"Experimental",icon:"🌌",desc:"Experiment with time-shifted movement.",type:"micro"},
- {id:"memory",name:"Memory Matrix",dim:"2D",cat:"Puzzle",icon:"🧠",desc:"Remember the pattern and repeat it.",type:"memory"},
- {id:"cube",name:"Cube Quest",dim:"3D",cat:"Puzzle",icon:"🎲",desc:"Guide a cube through a projected 3D maze.",type:"cube"}
-];
 
 const $ = id => document.getElementById(id);
-let category="All",view="all",current=null,playing=false,score=0,frame=0,raf=0;
-let player={x:100,y:350,vx:0,vy:0};
-let keys={},objects=[],lastTime=0,mazeTarget={x:0,y:0};
-const canvas=$("stage"),ctx=canvas.getContext("2d");
-const favorites=new Set(JSON.parse(localStorage.getItem("da-favorites")||"[]"));
-const recent=JSON.parse(localStorage.getItem("da-recent")||"[]");
+let lastReport = null;
 
-function render(){
- const q=$("search").value.toLowerCase();
- const list=games.filter(g=>
-  (category==="All"||g.dim===category||g.cat===category)&&
-  (view!=="favorites"||favorites.has(g.id))&&
-  (view!=="recent"||recent.includes(g.id))&&
-  (g.name+" "+g.desc+" "+g.dim+" "+g.cat).toLowerCase().includes(q)
- );
- $("grid").innerHTML="";
- $("count").textContent=list.length+" games";
- $("listTitle").textContent=view==="favorites"?"Your favorites":view==="recent"?"Recently played":"All minigames";
- if(!list.length){$("grid").innerHTML='<div class="empty">No games found. Try another category or search.</div>';return}
- list.forEach(g=>{
-  const card=document.createElement("article");card.className="card";
-  const art=document.createElement("div");art.className="art";art.textContent=g.icon;
-  const body=document.createElement("div");body.className="card-body";
-  const title=document.createElement("h3");title.textContent=g.name;
-  const desc=document.createElement("p");desc.textContent=g.desc;
-  const foot=document.createElement("div");foot.className="card-foot";
-  const dim=document.createElement("span");dim.className="dim";dim.textContent=g.dim;
-  const actions=document.createElement("div");
-  const fav=document.createElement("button");fav.className="small-btn";fav.textContent=favorites.has(g.id)?"♥":"♡";fav.title="Toggle favorite";
-  fav.onclick=()=>{favorites.has(g.id)?favorites.delete(g.id):favorites.add(g.id);localStorage.setItem("da-favorites",JSON.stringify([...favorites]));render()};
-  const play=document.createElement("button");play.className="small-btn";play.textContent="Play ▶";play.onclick=()=>openGame(g);
-  actions.append(fav,play);foot.append(dim,actions);body.append(title,desc,foot);card.append(art,body);$("grid").append(card);
- });
-}
-$("search").addEventListener("input",render);
-document.querySelectorAll(".cat").forEach(b=>b.onclick=()=>{
- category=b.dataset.cat;document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x===b));render();
-});
-document.querySelectorAll(".nav[data-view]").forEach(b=>b.onclick=()=>{
- view=b.dataset.view;document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("active",x===b));category="All";
- document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"));render();
-});
-$("settingsBtn").onclick=()=>alert("Dimension Arcade settings\n\nFavorites and recent games are saved in this browser on this device. This demo does not send your data to a server.");
-document.querySelectorAll("[data-play]").forEach(b=>b.onclick=()=>openGame(games.find(g=>g.id===b.dataset.play)));
-$("close").onclick=()=>{playing=false;cancelAnimationFrame(raf);$("overlay").classList.remove("show")};
+/*
+ Pattern scanner only.
+ Patterns are indicators for manual review, not proof of malware.
+*/
+const rules = [
+ {
+  id:"dynamic-exec", severity:"high",
+  title:"Dynamic code execution",
+  description:"Code appears to construct or execute another code string. Check whether untrusted input can reach this operation.",
+  regex:/\beval\s*\(|\bexec\s*\(|\bnew\s+Function\s*\(|\bcompile\s*\(/gi
+ },
+ {
+  id:"shell-execution", severity:"high",
+  title:"Shell or process execution",
+  description:"A process or shell command may be launched. Confirm the command and all input passed to it.",
+  regex:/\bos\.system\s*\(|\bsubprocess\.(?:Popen|run|call|check_output)\s*\(|\bchild_process\b|\bexecSync\s*\(|\bspawnSync\s*\(|\bshell_exec\s*\(|\bpassthru\s*\(|\bRuntime\.getRuntime\s*\(\s*\)\.exec\s*\(/gi
+ },
+ {
+  id:"download-execute", severity:"high",
+  title:"Possible download-and-execute chain",
+  description:"Network retrieval and execution-related code may be combined. Inspect where the downloaded content originates and how it is used.",
+  regex:/\b(?:urlopen|urlretrieve|requests\.get|fetch|curl_exec)\s*\(/gi
+ },
+ {
+  id:"encoded-payload", severity:"medium",
+  title:"Encoding or decoding operation",
+  description:"Encoding or decoding is present. This is common in normal software too, but may conceal content when combined with execution.",
+  regex:/\b(?:base64\.b64decode|b64decode|atob|Buffer\.from|fromCharCode|unescape)\s*\(/gi
+ },
+ {
+  id:"persistence", severity:"high",
+  title:"Possible persistence or startup modification",
+  description:"The code may change startup behavior, scheduled tasks or system configuration. Verify that this is intended.",
+  regex:/\b(?:schtasks|crontab|systemctl\s+enable|reg\s+add|StartupFolder|RunOnce)\b/gi
+ },
+ {
+  id:"credential-access", severity:"high",
+  title:"Possible credential or secret access",
+  description:"A reference to passwords, browser credentials, private keys or environment secrets was detected. Determine whether the access is legitimate.",
+  regex:/\b(?:Login Data|Local State|id_rsa|id_ed25519|passwords\.json|credential|SECRET_KEY|process\.env)\b/gi
+ },
+ {
+  id:"network-connection", severity:"medium",
+  title:"Network communication",
+  description:"The code appears to use a network connection or request. Check destination addresses and what data is transmitted.",
+  regex:/\b(?:requests\.(?:get|post|put)|urllib\.request|http\.client|fetch\s*\(|XMLHttpRequest|WebSocket\s*\(|socket\.connect|connect\s*\()\b/gi
+ },
+ {
+  id:"file-deletion", severity:"high",
+  title:"Potentially destructive file operation",
+  description:"A deletion or recursive file operation was detected. Verify the target paths and whether the operation is bounded.",
+  regex:/\b(?:shutil\.rmtree|os\.remove|os\.unlink|unlinkSync|rmdirSync|Remove-Item|rm\s+-rf|del\s+\/[fq])\b/gi
+ },
+ {
+  id:"permission-change", severity:"medium",
+  title:"Permission or privilege modification",
+  description:"The code may change permissions or request elevated privileges. Confirm why it needs that access.",
+  regex:/\b(?:chmod\s*\(|chown\s*\(|sudo\b|runas\b|requireAdministrator|SeDebugPrivilege)\b/gi
+ },
+ {
+  id:"hidden-browser-code", severity:"medium",
+  title:"Obfuscated or hidden browser behavior",
+  description:"Hidden script elements or encoded browser code can make behavior harder to review. Inspect the surrounding code.",
+  regex:/<script\b[^>]*>[\s\S]{0,500}?(?:atob\s*\(|eval\s*\()/gi
+ },
+ {
+  id:"dynamic-import", severity:"medium",
+  title:"Dynamic module loading",
+  description:"A module may be loaded dynamically. Check the module source and whether the name can be influenced by untrusted data.",
+  regex:/\bimport\s*\(\s*[^'"]/gi
+ },
+ {
+  id:"dangerous-html", severity:"medium",
+  title:"Dynamic HTML insertion",
+  description:"HTML may be inserted as a string. If that string contains untrusted content, it can create a cross-site scripting vulnerability.",
+  regex:/\.innerHTML\s*=|\.outerHTML\s*=|document\.write\s*\(/gi
+ },
+ {
+  id:"deserialization", severity:"high",
+  title:"Potentially unsafe deserialization",
+  description:"An object deserialization operation was detected. Some deserializers can execute unexpected behavior when given untrusted input.",
+  regex:/\bpickle\.loads\s*\(|\byaml\.load\s*\(|\bObjectInputStream\b|\bunserialize\s*\(/gi
+ },
+ {
+  id:"crypto-mining", severity:"medium",
+  title:"Possible intensive computation or mining indicator",
+  description:"A known mining-related term or worker indicator was found. Confirm whether the workload is expected.",
+  regex:/\b(?:stratum\+tcp|cryptonight|coinhive|xmrig)\b/gi
+ }
+];
 
-function openGame(g){
- current=g;score=0;frame=0;playing=false;
- player={x:100,y:350,vx:0,vy:0};objects=[];
- $("gameTitle").textContent=g.name;$("gameDimension").textContent=g.dim+" · "+g.cat.toUpperCase();
- $("score").textContent="Score: 0";$("message").textContent="Ready when you are!";
- $("instructions").textContent="Keyboard: arrows / WASD · Touch: use buttons";
- $("overlay").classList.add("show");draw();
- const i=recent.indexOf(g.id);if(i>=0)recent.splice(i,1);recent.unshift(g.id);recent.splice(8);
- localStorage.setItem("da-recent",JSON.stringify(recent));render();
+function lineAt(source,index){
+ return source.slice(0,index).split("\n").length;
 }
-$("start").onclick=()=>{
- if(!current)return;
- cancelAnimationFrame(raf);playing=true;score=0;frame=0;objects=[];
- player={x:100,y:350,vx:0,vy:0};lastTime=0;
- $("message").textContent="Go!";loop();
-};
-$("left").onpointerdown=()=>keys.ArrowLeft=true;
-$("left").onpointerup=$("left").onpointerleave=()=>keys.ArrowLeft=false;
-$("right").onpointerdown=()=>keys.ArrowRight=true;
-$("right").onpointerup=$("right").onpointerleave=()=>keys.ArrowRight=false;
-$("jump").onpointerdown=()=>{keys.ArrowUp=true;setTimeout(()=>keys.ArrowUp=false,180)};
-window.addEventListener("keydown",e=>{keys[e.key]=true;if(["ArrowLeft","ArrowRight","ArrowUp"," "].includes(e.key))e.preventDefault()});
-window.addEventListener("keyup",e=>keys[e.key]=false);
-
-function text(t,x,y,size=20,color="#f3f6ff"){
- ctx.fillStyle=color;ctx.font="bold "+size+"px system-ui";ctx.fillText(t,x,y);
-}
-function background(){
- ctx.fillStyle="#070c1a";ctx.fillRect(0,0,900,480);
- ctx.strokeStyle="#1b2b48";ctx.lineWidth=1;
- for(let x=0;x<900;x+=45){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,480);ctx.stroke()}
- for(let y=0;y<480;y+=45){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(900,y);ctx.stroke()}
-}
-function box(x,y,w,h,color="#48f4ff"){
- ctx.fillStyle=color;ctx.fillRect(x,y,w,h);
-}
-function circle(x,y,r,color="#ff64c8"){
- ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
-}
-function draw(){
- if(!current)return;background();
- const t=current.type;
- if(t==="line"||t==="rhythm"){
-  box(60,225,780,8,"#394967");circle(player.x,229,13);
-  if(t==="line"){text("Stay on the line. Dodge the blocks.",60,90,21);objects.forEach(o=>box(o.x,195,20,65,"#ff64c8"))}
-  else{text("Press ↑ when the pulse reaches the target!",60,90,20);circle(450,229,18,"#a78bfa");box(425,195,50,68,"#48f4ff")}
- }else if(t==="platform"||t==="gravity"||t==="stars"){
-  box(0,420,900,60,"#1d2a46");
-  for(let x=100;x<900;x+=180)box(x,340-(x%3)*10,85,12,"#394c78");
-  circle(player.x,player.y,15);
-  objects.forEach(o=>o.star?circle(o.x,o.y,10,"#ffe477"):box(o.x,o.y,30,30,"#ff557c"));
-  text(t==="gravity"?"Tap ↑ to flip gravity!":"Collect stars. Avoid pink hazards!",40,65,20);
- }else if(t==="neon"||t==="portal"||t==="cube"){
-  // Perspective projection: a real-time 3D-style wireframe scene.
-  const horizon=125,vanX=450,vanY=horizon;
-  ctx.strokeStyle="#375b96";ctx.lineWidth=2;
-  for(let x=-500;x<=1400;x+=100){ctx.beginPath();ctx.moveTo(vanX,vanY);ctx.lineTo(x,480);ctx.stroke()}
-  for(let k=0;k<9;k++){let p=((frame*3+k*55)%440)/440;let y=horizon+p*p*355;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(900,y);ctx.stroke()}
-  const scale=.4+((frame*2)%240)/180;
-  const size=22*scale;
-  const px=player.x,py=385;
-  // 3D cube with front, top and side faces
-  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+size,py-size*.6);ctx.lineTo(px+size*2,py);ctx.lineTo(px+size,py+size*.6);ctx.closePath();ctx.fillStyle="#173d70";ctx.fill();ctx.strokeStyle="#48f4ff";ctx.stroke();
-  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py-size);ctx.lineTo(px+size,py-size*1.6);ctx.lineTo(px+size,py-size*.6);ctx.closePath();ctx.fillStyle="#2462a0";ctx.fill();ctx.stroke();
-  ctx.beginPath();ctx.moveTo(px+size,py-size*.6);ctx.lineTo(px+size,py-size*1.6);ctx.lineTo(px+size*2,py-size);ctx.lineTo(px+size*2,py);ctx.closePath();ctx.fillStyle="#612f99";ctx.fill();ctx.stroke();
-  objects.forEach(o=>{
-   let s=Math.max(5,o.s);ctx.strokeStyle="#ff64c8";ctx.lineWidth=3;
-   ctx.strokeRect(o.x-s,o.y-s,s*2,s*2);
-   ctx.strokeRect(o.x-s*.6,o.y-s*.6,s*1.2,s*1.2);
-  });
-  text("DODGE THE 3D OBSTACLES",40,60,20);
- }else if(t==="time"||t==="micro"){
-  text(t==="time"?"TIME LOOP":"MICROVERSE",40,60,23);
-  text("Move around the field. The world shifts with time.",40,95,16,"#a78bfa");
-  const phase=Math.floor(frame/100)%4;
-  circle(player.x,player.y,14,["#48f4ff","#a78bfa","#ff64c8","#ffe477"][phase]);
-  objects.forEach(o=>box(o.x,o.y,25,25,"#ff64c8"));
-  text("TIME PHASE "+(phase+1),40,440,17);
- }else if(t==="maze"){
-  text("Find the glowing exit",40,60,22);
-  for(let y=0;y<7;y++)for(let x=0;x<11;x++){
-   if((x*3+y*7+x*y)%5!==0 && !(x===0&&y===0)&&!(x===10&&y===6))box(80+x*65,100+y*47,52,35,"#283955");
-  }
-  box(730,382,40,40,"#48f4ff");circle(player.x,player.y,13);
- }else if(t==="memory"){
-  text("Memorize the glowing tile pattern",40,60,22);
-  for(let i=0;i<9;i++){
-   const x=260+(i%3)*130,y=120+Math.floor(i/3)*100;
-   box(x,y,95,70,(Math.floor(frame/60)%9===i)?"#a78bfa":"#243450");
-  }
-  text("Score by staying focused!",40,450,17);
- }
- if(!playing)text("PRESS START TO PLAY",345,250,22,"#48f4ff");
-}
-function spawn(){
- const t=current.type;
- if(t==="line"||t==="neon"||t==="portal"||t==="cube"){
-  if(frame%55===0)objects.push({x:910,y:t==="line"?0:330+Math.random()*70,s:8+Math.random()*20});
- }else if(["platform","gravity","stars","time","micro"].includes(t)){
-  if(frame%45===0)objects.push({x:920,y:300+Math.random()*100,star:Math.random()>.45});
- }
-}
-function loop(){
- if(!playing)return;
- frame++;
- const t=current.type;
- if(t==="line"||t==="rhythm"){
-  if(keys.ArrowLeft||keys.a)player.x-=5;
-  if(keys.ArrowRight||keys.d)player.x+=5;
-  player.x=Math.max(60,Math.min(840,player.x));
- }else if(t==="platform"||t==="gravity"||t==="stars"){
-  player.x+=((keys.ArrowRight||keys.d)?5:0)-((keys.ArrowLeft||keys.a)?5:0);
-  if((keys.ArrowUp||keys[" "])&&player.y>=405)player.vy=-12;
-  player.vy+=.55;player.y+=player.vy;
-  if(player.y>405){player.y=405;player.vy=0}
-  player.x=Math.max(15,Math.min(880,player.x));
- }else if(["neon","portal","cube"].includes(t)){
-  player.x+=((keys.ArrowRight||keys.d)?6:0)-((keys.ArrowLeft||keys.a)?6:0);
-  player.x=Math.max(30,Math.min(830,player.x));
- }else if(["time","micro","maze","memory"].includes(t)){
-  player.x+=((keys.ArrowRight||keys.d)?4:0)-((keys.ArrowLeft||keys.a)?4:0);
-  player.y+=((keys.ArrowDown||keys.s)?4:0)-((keys.ArrowUp||keys.w)?4:0);
-  player.x=Math.max(15,Math.min(880,player.x));player.y=Math.max(100,Math.min(450,player.y));
- }
- spawn();
- objects.forEach(o=>o.x-=t==="neon"?5:4);
- objects=objects.filter(o=>o.x>-60);
- if(t==="line"||t==="neon"||t==="portal"||t==="cube"){
-  if(objects.some(o=>Math.abs(o.x-player.x)<22)){endGame();return}
- }else if(["platform","gravity","stars","time","micro"].includes(t)){
-  objects.forEach(o=>{
-   if(!o.collected&&Math.abs(o.x-player.x)<24&&Math.abs(o.y-player.y)<30){
-    o.collected=true;if(o.star){score+=10}else{endGame()}
+function scan(source){
+ const results=[];
+ for(const rule of rules){
+  // Reset state because global regular expressions are reused.
+  rule.regex.lastIndex=0;
+  let match,seen=new Set();
+  while((match=rule.regex.exec(source))!==null){
+   const line=lineAt(source,match.index);
+   const key=rule.id+":"+line;
+   if(!seen.has(key)){
+    seen.add(key);
+    results.push({
+     id:rule.id,severity:rule.severity,title:rule.title,
+     description:rule.description,line,match:match[0].slice(0,100)
+    });
    }
-  });
-  objects=objects.filter(o=>!o.collected);
+   if(match[0].length===0)rule.regex.lastIndex++;
+   if(results.length>=200)break;
+  }
  }
- if(frame%30===0)score++;
- $("score").textContent="Score: "+score;
- draw();raf=requestAnimationFrame(loop);
+ return results.sort((a,b)=>
+  ({high:0,medium:1,low:2}[a.severity]-{high:0,medium:1,low:2}[b.severity])||a.line-b.line
+ );
 }
-function endGame(){
- playing=false;cancelAnimationFrame(raf);
- $("message").textContent="Round over! Score: "+score+" · Press Start to try again.";
- draw();
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
 }
-canvas.addEventListener("pointerdown",e=>{
- if(!current||!playing)return;
- const r=canvas.getBoundingClientRect();
- const x=(e.clientX-r.left)*900/r.width;
- if(x<450)keys.ArrowLeft=true;else keys.ArrowRight=true;
- setTimeout(()=>{keys.ArrowLeft=false;keys.ArrowRight=false},180);
+function assess(results){
+ let score=0;
+ for(const r of results){
+  score+=r.severity==="high"?25:r.severity==="medium"?10:3;
+ }
+ return Math.min(100,score);
+}
+function runScan(){
+ const source=$("code").value;
+ if(!source.trim()){
+  $("findings").innerHTML='<div class="empty">Paste some source code first.</div>';
+  $("risk").textContent="NO CODE";
+  $("scoreText").textContent="Nothing to scan.";
+  $("scoreNumber").textContent="—";
+  $("meterFill").style.width="0";
+  return;
+ }
+ const results=scan(source);
+ const score=assess(results);
+ const high=results.filter(x=>x.severity==="high").length;
+ const medium=results.filter(x=>x.severity==="medium").length;
+ let level,color;
+ if(high>0||score>=60){level="HIGH RISK";color="var(--red)"}
+ else if(score>=20||medium>0){level="REVIEW";color="var(--yellow)"}
+ else if(results.length){level="LOW SIGNAL";color="var(--cyan)"}
+ else{level="NO MATCHES";color="var(--green)"}
+
+ $("risk").textContent=level;
+ $("risk").style.color=color;
+ $("scoreNumber").textContent=score+"/100";
+ $("scoreText").textContent=results.length
+  ? "Patterns require manual review."
+  : "No configured patterns matched.";
+ $("meterFill").style.width=score+"%";
+ $("meterFill").style.background=color;
+ $("findingCount").textContent=results.length;
+ $("highCount").textContent=high;
+ $("medCount").textContent=medium;
+ $("lineCount").textContent=source.split("\n").length;
+ $("scanLabel").textContent="SCAN COMPLETE · "+new Date().toLocaleTimeString();
+
+ if(!results.length){
+  $("findings").innerHTML=
+   '<div class="finding"><strong class="safe">✓ No configured suspicious patterns matched</strong>'+
+   '<p>This is not a guarantee that the code is safe. Other malicious behavior may not match these rules.</p></div>';
+ }else{
+  $("findings").innerHTML=results.map(r=>
+   '<article class="finding">'+
+   '<span class="severity '+r.severity+'">'+escapeHTML(r.severity.toUpperCase())+
+   ' · LINE '+r.line+'</span>'+
+   '<strong>'+escapeHTML(r.title)+'</strong>'+
+   '<p>'+escapeHTML(r.description)+'</p>'+
+   '<p><code>Matched: '+escapeHTML(r.match)+'</code></p>'+
+   '</article>'
+  ).join("");
+ }
+ lastReport={
+  product:"CodeShield Browser Scanner",
+  scannedAt:new Date().toISOString(),
+  language:$("language").value,
+  lines:source.split("\n").length,
+  risk:level,score,findings:results
+ };
+}
+$("scan").addEventListener("click",runScan);
+$("clear").addEventListener("click",()=>{
+ $("code").value="";lastReport=null;
+ $("risk").textContent="NOT SCANNED";$("risk").style.color="";
+ $("scoreText").textContent="Run a scan to begin.";
+ $("scoreNumber").textContent="—";$("meterFill").style.width="0";
+ $("findingCount").textContent="0";$("highCount").textContent="0";
+ $("medCount").textContent="0";$("lineCount").textContent="0";
+ $("scanLabel").textContent="AWAITING SCAN";
+ $("findings").innerHTML='<div class="empty">No report yet. Paste code and select Scan code.</div>';
 });
-render();
+$("example").addEventListener("click",()=>{
+ $("language").value="Python";
+ $("code").value=[
+  "# Demonstration only: this is intentionally suspicious-looking sample code.",
+  "import os",
+  "import base64",
+  "import subprocess",
+  "",
+  "payload = base64.b64decode('ZGVtbw==')",
+  "# Review dynamic execution and process-launching patterns.",
+  "os.system('echo demo')",
+  "print(payload)"
+ ].join("\n");
+ runScan();
+});
+$("export").addEventListener("click",()=>{
+ if(!lastReport){alert("Run a scan before exporting a report.");return}
+ const blob=new Blob([JSON.stringify(lastReport,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download="codeshield-report.json";
+ a.click();URL.revokeObjectURL(url);
+});
 </script>
 </body>
 </html>
+
